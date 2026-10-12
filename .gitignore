@@ -1,0 +1,16 @@
+# Virtual environment (buni aslo yuklamaymiz)
+venv/
+.venv/
+env/
+
+# Python kesh fayllari
+pycache/
+*.pyc
+*.pyo
+
+# Maxfiy ma'lumotlar va muhit o'zgaruvchilari
+.env
+
+# VS Code va tizim fayllari
+.vscode/
+.DS_Store
