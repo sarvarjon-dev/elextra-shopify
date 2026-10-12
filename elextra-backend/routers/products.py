@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
 from typing import List, Optional
 
 from database.connection import get_db
@@ -12,13 +13,44 @@ from dependencies import get_current_admin
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
-# 1. Ochiq yo'l: Barcha mahsulotlar ro'yxatini olish (ixtiyoriy category_id filtri bilan)
+# 1. Ochiq yo'l: Barcha mahsulotlar ro'yxatini olish (Filtrlash, Saralash va Sahifalash bilan)
 @router.get("/", response_model=List[ProductResponse])
-def get_products(category_id: Optional[int] = None, db: Session = Depends(get_db)):
+def get_products(
+    category_id: Optional[int] = None,  # Sizning eski kodingizdagi kategoriya filtri
+    skip: int = Query(0, ge=0, description="Nechta mahsulotni o'tkazib yuborish"),
+    limit: int = Query(
+        10, ge=1, le=50, description="Bitta sahifada nechta mahsulot chiqishi"
+    ),
+    sort_by: Optional[str] = Query(
+        None, description="Saralash turi: 'price', 'bestseller', 'newest'"
+    ),
+    order: str = Query("asc", description="Tartib: 'asc' yoki 'desc'"),
+    db: Session = Depends(get_db),
+):
+    # 1. Boshlang'ich so'rov (hali bazaga bormadi)
     query = db.query(Product)
+
+    # 2. Kategoriya bo'yicha filtrlash (Sizning kodingiz saqlab qolindi)
     if category_id:
         query = query.filter(Product.category_id == category_id)
-    return query.all()
+
+    # 3. Saralash mantiqi (Yangi qo'shilgan kod)
+    if sort_by == "price":
+        if order == "desc":
+            query = query.order_by(desc(Product.price))
+        else:
+            query = query.order_by(asc(Product.price))
+
+    elif sort_by == "newest":
+        # Eng yangi qo'shilganlar
+        query = query.order_by(desc(Product.created_at))
+
+    # Agar Product modelida sold_count (sotilgan soni) degan ustun qo'shgan bo'lsangiz:
+    elif sort_by == "bestseller":
+        query = query.order_by(desc(Product.sold_count))
+
+    # 4. Sahifalash va bazadan barchasini tortib olish
+    return query.offset(skip).limit(limit).all()
 
 
 # 2. Ochiq yo'l: Bitta mahsulotni ID orqali olish
