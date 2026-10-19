@@ -10,6 +10,7 @@ export const mockTrendingProducts: Product[] = [
     rating: 4.8,
     reviewCount: 12,
     inStock: true,
+    category: "laptops",
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ export const mockTrendingProducts: Product[] = [
     rating: 4.9,
     reviewCount: 12,
     inStock: true,
+    category: "laptops",
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ export const mockTrendingProducts: Product[] = [
     rating: 4.5,
     reviewCount: 10,
     inStock: true,
+    category: "laptops",
   },
   {
     id: 4,
@@ -38,7 +41,8 @@ export const mockTrendingProducts: Product[] = [
     imageUrl: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400",
     rating: 4.2,
     reviewCount: 12,
-    inStock: false, // "OUT OF STOCK" holatini sinash uchun
+    inStock: false, // "OUT OF STOCK" holatini sinash uchun,
+    category: "laptops",
   },
   {
     id: 5,
@@ -49,6 +53,7 @@ export const mockTrendingProducts: Product[] = [
     rating: 4.7,
     reviewCount: 10,
     inStock: true,
+    category: "laptops",
   },
   {
     id: 6,
@@ -58,6 +63,7 @@ export const mockTrendingProducts: Product[] = [
     rating: 4.6,
     reviewCount: 10,
     inStock: true,
+    category: "laptops",
   },
 ];
 
@@ -70,6 +76,7 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
   {
     id: 102,
@@ -79,6 +86,7 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
   {
     id: 103,
@@ -88,6 +96,7 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
   {
     id: 104,
@@ -97,6 +106,7 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
   {
     id: 105,
@@ -106,6 +116,7 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
   {
     id: 106,
@@ -115,5 +126,6 @@ export const mockBestDeals: Product[] = [
       "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=200",
     rating: 4,
     reviewCount: 12,
+    category: "laptops",
   },
 ];

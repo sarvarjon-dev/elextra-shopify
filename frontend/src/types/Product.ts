@@ -6,5 +6,6 @@ export interface Product {
   imageUrl: string;
   rating?: number;
   reviewCount?: number;
-  inStock?: boolean; // true bo'lsa "Add to Cart", false bo'lsa "OUT OF STOCK"
+  inStock?: boolean; // true bo'lsa "Add to Cart", false bo'lsa "OUT OF STOCK",
+  category: string;
 }

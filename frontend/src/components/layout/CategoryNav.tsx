@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 interface Category {
   id: string;
@@ -18,45 +18,37 @@ const categories: Category[] = [
 ];
 
 export const CategoryNav = () => {
-  const navigate = useNavigate();
   const { slug } = useParams<{ slug?: string }>();
 
   // Agar URL'da slug bo'lmasa, demak "all" (barchasi) aktiv
   const activeCategory = slug || "all";
-
-  const handleCategoryClick = (catSlug: string) => {
-    if (catSlug === "all") {
-      navigate("/");
-    } else {
-      navigate(`/category/${catSlug}`);
-    }
-  };
 
   return (
     <div className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Gorizontal kategoriyalar menyusi */}
         <nav className="flex items-center gap-8 overflow-x-auto py-3 no-scrollbar">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat.slug;
+          {categories.map((category) => {
+            const isActive = activeCategory === category.slug;
+            const path =
+              category.slug === "all" ? "/" : `/category/${category.slug}`;
             return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => handleCategoryClick(cat.slug)}
+              <Link
+                to={path}
+                key={category.id}
                 className={`relative whitespace-nowrap text-xs font-medium transition py-1 ${
                   isActive
                     ? "font-bold text-orange-500"
                     : "text-slate-600 hover:text-orange-500"
                 }`}
               >
-                {cat.name}
+                {category.name}
 
                 {/* Aktiv bo'lganda tagida chiqadigan olovrang chiziq */}
                 {isActive && (
                   <span className="absolute bottom-0 left-0 h-0.5 w-full rounded-full bg-orange-500" />
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>

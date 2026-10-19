@@ -1,6 +1,7 @@
 // src/components/common/cards/ProductCard.tsx
 import React from "react";
 import { Star } from "lucide-react";
+import { Link } from "react-router";
 import type { Product } from "../../../types/Product";
 
 interface ProductCardProps {
@@ -20,20 +21,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm transition duration-200 hover:shadow-md">
       {/* 1. Mahsulot Rasmi */}
-      <div className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-50">
+      <Link
+        to={`/product/${product.id}`}
+        aria-label={`View ${title} details`}
+        className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-50"
+      >
         <img
           src={imageUrl}
           alt={title}
           className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105"
           loading="lazy"
         />
-      </div>
+      </Link>
 
       {/* 2. Mahsulot Haqida Ma'lumot */}
       <div className="flex flex-1 flex-col">
-        <h4 className="line-clamp-2 min-h-10 text-xs font-semibold text-slate-800 hover:text-orange-500">
+        <Link
+          to={`/product/${product.id}`}
+          className="line-clamp-2 min-h-10 text-xs font-semibold text-slate-800 hover:text-orange-500"
+        >
           {title}
-        </h4>
+        </Link>
 
         {/* Narx va Reyting qatori */}
         <div className="mt-2 flex items-center justify-between text-xs">
