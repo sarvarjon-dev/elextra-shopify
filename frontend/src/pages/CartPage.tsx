@@ -49,7 +49,8 @@ export const CartPage = () => {
 
   // 2. "Select All" checkbox bosilganda ishlaydigan funksiya
   const handleSelectAll = () => {
-    const newState = !isAllSelected; // Agar hammasi tanlangan bo'lsa false qilamiz, yo'qsa true
+    const newState = !isAllSelected;
+
     const updatedItems = items.map((item) => ({ ...item, selected: newState }));
     setItems(updatedItems);
   };
