@@ -1,35 +1,23 @@
-import Navbar from "../components/layout/Navbar";
-import CategoryNav from "../components/layout/CategoryNav";
-import Footer from "../components/layout/Footer";
 import ProductCard from "../components/common/cards/Product";
-
-import { mockTrendingProducts } from "../data/products";
 import { useLoaderData } from "react-router";
+import { getProducts } from "../loaders/productLoader";
 
-export const categoryLoader = ({ params }: any) => {
-  const categorySlug = params.slug || "all";
+export const categoryLoader = async ({ params }: any) => {
+  try {
+    const { slug } = params;
 
-  if (categorySlug === "all") {
-    return mockTrendingProducts;
+    const products = await getProducts(slug);
+    return products;
+  } catch (err) {
+    console.log("something went wrong", err);
   }
-
-  const filterProducts = mockTrendingProducts.filter(
-    (product) => product.category === categorySlug,
-  );
-
-  return filterProducts;
 };
 
 export const CategoryPage = () => {
   const dynamicProducts = useLoaderData() as any[];
+  console.log("categoriyaga mos mahsulotlar", dynamicProducts);
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50">
-      {/* 1. Yuqori navigatsiya */}
-      <div>
-        <Navbar />
-        <CategoryNav />
-      </div>
-
+    <div>
       {/* 2. Asosiy qism: Faqat Title va Kartalar */}
       <main className="mx-auto w-full max-w-7xl grow px-4 py-8 sm:px-6 lg:px-8">
         {/* Sarlavha */}
@@ -44,9 +32,6 @@ export const CategoryPage = () => {
           ))}
         </div>
       </main>
-
-      {/* 3. Footer */}
-      <Footer />
     </div>
   );
 };

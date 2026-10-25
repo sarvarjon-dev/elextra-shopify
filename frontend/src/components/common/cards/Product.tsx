@@ -2,7 +2,7 @@
 import React from "react";
 import { Star } from "lucide-react";
 import { Link } from "react-router";
-import type { Product } from "../../../types/Product";
+import type { Product } from "../../../types";
 
 interface ProductCardProps {
   product: Product;
@@ -10,12 +10,12 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const {
-    title,
+    name,
     price,
-    imageUrl,
+    main_image,
     rating = 4.5,
-    reviewCount = 12,
-    inStock = true,
+    reviews_count = 12,
+    stock_quantity,
   } = product;
 
   return (
@@ -23,12 +23,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* 1. Mahsulot Rasmi */}
       <Link
         to={`/product/${product.id}`}
-        aria-label={`View ${title} details`}
+        aria-label={`View ${name} details`}
         className="relative mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-50"
       >
         <img
-          src={imageUrl}
-          alt={title}
+          src={main_image || "https://placehold.co/300x300?text=No+Image"}
+          alt={name}
           className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105"
           loading="lazy"
         />
@@ -40,7 +40,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           to={`/product/${product.id}`}
           className="line-clamp-2 min-h-10 text-xs font-semibold text-slate-800 hover:text-orange-500"
         >
-          {title}
+          {name}
         </Link>
 
         {/* Narx va Reyting qatori */}
@@ -54,7 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
             </div>
             <span className="text-[11px] font-medium text-slate-400">
-              ({reviewCount})
+              ({reviews_count})
             </span>
           </div>
         </div>
@@ -62,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* 3. Add to Cart / Out of Stock Tugmasi */}
       <div className="mt-4">
-        {inStock ? (
+        {stock_quantity > 0 ? (
           <button
             type="button"
             className="w-full rounded-md border border-orange-400 py-1.5 text-xs font-medium text-orange-500 transition hover:bg-orange-500 hover:text-white"

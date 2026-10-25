@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from datetime import datetime
-
+from schemas.review import ReviewResponse
 
 # Asosiy umumiy maydonlar
 class ProductBase(BaseModel):
@@ -51,6 +51,8 @@ class ProductResponse(ProductBase):
     views_count: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    reviews: List[ReviewResponse] = []
 
     class Config:
         from_attributes = True
