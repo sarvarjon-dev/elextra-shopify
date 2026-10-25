@@ -16,6 +16,7 @@ router = APIRouter(prefix="/products", tags=["Products"])
 # 1. Ochiq yo'l: Barcha mahsulotlar ro'yxatini olish (Filtrlash, Saralash va Sahifalash bilan)
 @router.get("/", response_model=List[ProductResponse])
 def get_products(
+    category_slug: Optional[str] = None,
     category_id: Optional[int] = None,  # Sizning eski kodingizdagi kategoriya filtri
     skip: int = Query(0, ge=0, description="Nechta mahsulotni o'tkazib yuborish"),
     limit: int = Query(
@@ -29,6 +30,9 @@ def get_products(
 ):
     # 1. Boshlang'ich so'rov (hali bazaga bormadi)
     query = db.query(Product)
+
+    if category_slug:
+        query = query.join(Category).filter(Category.slug == category_slug)
 
     # 2. Kategoriya bo'yicha filtrlash (Sizning kodingiz saqlab qolindi)
     if category_id:

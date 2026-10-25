@@ -8,4 +8,5 @@ export interface Product {
   reviewCount?: number;
   inStock?: boolean; // true bo'lsa "Add to Cart", false bo'lsa "OUT OF STOCK",
   category: string;
+  reviews: string[];
 }

@@ -1,20 +1,15 @@
-import { useParams } from "react-router";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import { mockTrendingProducts } from "../data/products";
 import { useState } from "react";
-import ReviewCard, { mockReviews } from "../components/common/cards/ReviewCard";
+import ReviewCard from "../components/common/cards/ReviewCard";
+import { useLoaderData, useNavigate } from "react-router";
+import type { Product } from "../types";
 
 export const ProductDetailPage = () => {
-  // 1. URL'dan id ni ushlab olamiz (masalan: /product/1 bo'lsa, id = "1")
-  const { id } = useParams();
-
-  // 2. Shu id ga teng bo'lgan mahsulotni vaqtincha bazamizdan (mock) qidirib topamiz
-  const product = mockTrendingProducts.find((item) => String(item.id) === id);
+  const product = useLoaderData() as Product;
+  const navigate = useNavigate();
 
   // Vaqtincha 3 ta rasm yasab olamiz (biri o'zining rasmi, ikkitasi oddiy namuna)
   const productImages = [
-    { id: 1, url: product?.imageUrl || "" },
+    { id: 1, url: product?.main_image || "" },
     {
       id: 2,
       url: "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?w=500&q=80",
@@ -35,24 +30,33 @@ export const ProductDetailPage = () => {
   const sizes = ["14-inch", "24-inch", "32-inch", "60-inch"]; // Dizayndagi razmerlar
 
   // Agar bunday id lik mahsulot topilmasa, xato sahifasi ko'rsatamiz
+  // Agar xatolik bo'lib mahsulot kelmasa (null bo'lsa), xatoni ko'rsatamiz
   if (!product) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-2xl font-bold text-red-500">
-        Mahsulot topilmadi!
+      <div className="flex flex-col items-center justify-center h-96">
+        <h2 className="text-2xl font-bold text-gray-700">
+          Mahsulot topilmadi 😕
+        </h2>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-4 px-4 py-2 bg-slate-200 rounded"
+        >
+          Orqaga qaytish
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-slate-50">
-      <Navbar />
-
+    <div>
       {/* Asosiy Qism */}
       <main className="mx-auto w-full max-w-7xl grow px-4 py-8 sm:px-6 lg:px-8">
         {/* Navigatsiya (Breadcrumb) */}
         <div className="mb-6 text-sm text-slate-500">
-          Home {">"} {product.category} {">"}{" "}
-          <span className="font-bold text-slate-900">{product.title}</span>
+          <a className="hover:text-orange-500" href="/">
+            Home
+          </a>{" "}
+          {">"} <span className="font-bold text-slate-900">{product.name}</span>
         </div>
 
         {/* Ekranni ikkiga bo'lamiz: Chapda Rasm, O'ngda Ma'lumot */}
@@ -84,7 +88,7 @@ export const ProductDetailPage = () => {
             <div className="flex h-112.5 w-full items-center justify-center rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
               <img
                 src={activeImg.url}
-                alt={product.title}
+                alt={product.name}
                 className="max-h-full max-w-full object-contain transition-all duration-300"
               />
             </div>
@@ -93,9 +97,9 @@ export const ProductDetailPage = () => {
           {/* 2. O'NG TOMON: Ma'lumotlar va Tugmalar */}
           <div className="flex flex-col rounded-xl bg-white p-8 shadow-sm border border-slate-100">
             {/* 1. Sarlavha va Reyting */}
-            <p className="text-sm text-slate-400">SKU: 223234124</p>
+            <p className="text-sm text-slate-400">SKU: {product.sku}</p>
             <h1 className="mt-2 text-3xl font-bold text-slate-900 leading-tight">
-              {product.title}
+              {product.name}
             </h1>
 
             <div className="mt-4 flex items-center gap-4 text-sm text-slate-500">
@@ -104,23 +108,47 @@ export const ProductDetailPage = () => {
                 <span className="ml-2 text-slate-600 font-bold">4.0</span>
               </div>
               <span className="hidden sm:inline">|</span>
-              <span>223 Reviews</span>
+              <span>{product.reviews.length} Reviews</span>
               <span className="hidden sm:inline">|</span>
-              <span>4,320 sold</span>
+              <span>{product.sold_count} sold</span>
             </div>
 
             {/* 2. Narx qismi */}
+            {/* 2. Narx qismi */}
             <div className="mt-6 flex items-end gap-3">
-              <p className="text-4xl font-bold text-orange-500">
-                ${product.price}
+              {product.discount_price ? (
+                /* AGAR CHEGIRMA BO'LSA: Ikkala narx va foiz ko'rinadi */
+                <>
+                  <p className="text-4xl font-bold text-orange-500">
+                    ${product.discount_price}
+                  </p>
+                  <p className="text-lg text-slate-400 line-through mb-1">
+                    ${product.price}
+                  </p>
+                  {/* Foizni avtomatik hisoblash */}
+                  <span className="mb-2 rounded bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
+                    Save{" "}
+                    {Math.round(
+                      ((product.price - product.discount_price) /
+                        product.price) *
+                        100,
+                    )}
+                    %
+                  </span>
+                </>
+              ) : (
+                /* AGAR CHEGIRMA YO'Q BO'LSA: Faqat oddiy narx o'zi katta bo'lib chiqadi */
+                <p className="text-4xl font-bold text-slate-900">
+                  ${product.price}
+                </p>
+              )}
+            </div>
+
+            {/* Description qismi */}
+            <div className="mt-5">
+              <p className="text-base text-slate-600 leading-relaxed">
+                {product.description}
               </p>
-              {/* Agar eski narx bo'lsa uni chizilgan qilib ko'rsatamiz */}
-              <p className="text-lg text-slate-400 line-through mb-1">
-                $1,200.99
-              </p>
-              <span className="mb-2 rounded bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
-                Save 19%
-              </span>
             </div>
 
             {/* 3. Qisqacha xususiyatlari */}
@@ -198,17 +226,21 @@ export const ProductDetailPage = () => {
       {/* 3. SHARHLAR (REVIEWS) QISMI */}
       <div className="mt-16 rounded-xl border border-slate-100 bg-white p-8 shadow-sm">
         <h2 className="mb-6 text-2xl font-bold text-slate-900">
-          Customer Reviews ({mockReviews.length})
+          Customer Reviews ({product?.reviews.length || 0})
         </h2>
 
         <div className="flex flex-col">
-          {mockReviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
+          {product.reviews && product.reviews.length > 0 ? (
+            product.reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
+          ) : (
+            <div className="py-8 text-center text-slate-500">
+              Hali hech kim izoh qoldirmagan. Birinchi bo'lib izoh yozing
+            </div>
+          )}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

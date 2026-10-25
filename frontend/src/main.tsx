@@ -9,12 +9,34 @@ import SignUpPage from "./pages/SignUpPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import { AuthProvider } from "./context/AuthContext";
+import RootLayout from "./layouts/RootLayout";
+import { getCategories } from "./loaders/categoryLoader";
+import { productDetailLoader } from "./loaders/productLoader";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <RootLayout />,
+    loader: getCategories,
+    id: "root",
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "/category/:slug",
+        element: <CategoryPage />,
+        loader: categoryLoader,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetailPage />,
+        loader: productDetailLoader,
+      },
+    ],
   },
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -22,15 +44,6 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUpPage />,
-  },
-  {
-    path: "/product/:id",
-    element: <ProductDetailPage />,
-  },
-  {
-    path: "/category/:slug",
-    element: <CategoryPage />,
-    loader: categoryLoader,
   },
   {
     path: "/cart",

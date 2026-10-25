@@ -17,7 +17,7 @@ class Review(Base):
 
     # Aloqalar (Relationship)
     user = relationship("User")
-    product = relationship("Product")
+    product = relationship("Product", back_populates="reviews")
 
     # Yaratilgan vaqt
     created_at = Column(DateTime(timezone=True), server_default=func.now())
