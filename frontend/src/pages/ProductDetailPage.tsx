@@ -1,9 +1,29 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ReviewCard from "../components/common/cards/ReviewCard";
 import { useLoaderData, useNavigate } from "react-router";
 import type { Product } from "../types";
+import { CartContext } from "../context/CartContext";
 
 export const ProductDetailPage = () => {
+  const cartContext = useContext(CartContext);
+
+  // Tugma bosilganini bilish uchun vaqtinchalik state
+  const [isAdded, setIsAdded] = useState(false);
+
+  if (!cartContext) return null;
+  const { addToCart } = cartContext;
+
+  // Maxsus funksiya yozamiz
+  const handleAddToCart = () => {
+    addToCart(product); // Context'dagi funksiyani ishlatib xotiraga yozamiz
+    setIsAdded(true); // Tugma holatini "Qo'shildi" ga o'zgartiramiz
+
+    // 2 soniyadan keyin tugmani yana eski holatiga qaytaramiz
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
+
   const product = useLoaderData() as Product;
   const navigate = useNavigate();
 
@@ -214,8 +234,16 @@ export const ProductDetailPage = () => {
               <button className="flex-1 rounded-lg border-2 border-orange-500 px-6 py-3 font-bold text-orange-500 transition-all hover:bg-orange-50">
                 BUY
               </button>
-              <button className="flex-1 rounded-lg bg-orange-500 px-6 py-3 font-bold text-white transition-all hover:bg-orange-600 shadow-md hover:shadow-lg">
-                ADD TO CART
+              <button
+                onClick={handleAddToCart}
+                disabled={isAdded} // Qo'shildi yozuvi turganda qayta bosishni vaqtincha taqiqlaymiz
+                className={`px-6 py-2 rounded-lg font-bold transition-all duration-300 ${
+                  isAdded
+                    ? "bg-green-500 text-white" // Bosilganda yashil bo'ladi
+                    : "bg-blue-600 hover:bg-blue-700 text-white" // Asl holati (ko'k)
+                }`}
+              >
+                {isAdded ? "✓ Savatchaga qo'shildi" : "Savatchaga qo'shish"}
               </button>
             </div>
           </div>
