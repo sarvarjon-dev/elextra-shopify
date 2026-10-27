@@ -1,8 +1,9 @@
 // src/components/common/cards/ProductCard.tsx
-import React from "react";
+import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { Link } from "react-router";
 import type { Product } from "../../../types";
+import { useCart } from "../../../context/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -13,10 +14,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     name,
     price,
     main_image,
-    rating = 4.5,
     reviews_count = 12,
     stock_quantity,
   } = product;
+  const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product, 1); // 1. Context'ga qo'shamiz (Navbar'dagi raqam oshadi)
+    setIsAdded(true); // 2. Tugma holatini "Qo'shildi" holatiga o'tkazamiz
+
+    // 3. 2 soniyadan keyin yana eski holatiga qaytaramiz
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
 
   return (
     <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm transition duration-200 hover:shadow-md">
@@ -64,10 +76,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="mt-4">
         {stock_quantity > 0 ? (
           <button
+            onClick={handleAddToCart}
             type="button"
-            className="w-full rounded-md border border-orange-400 py-1.5 text-xs font-medium text-orange-500 transition hover:bg-orange-500 hover:text-white"
+            disabled={isAdded} // Bosilgandan keyin 2 soniya davomida yana bosib yubormasligi uchun
+            className={`w-full rounded-md border py-1.5 text-xs font-medium transition-all duration-300 ${
+              isAdded
+                ? "bg-green-500 text-white border-green-500" // Qo'shilgan paytdagi yashil rang
+                : "border-orange-400 text-orange-500 hover:bg-orange-50" // Oddiy paytdagi rang
+            }`}
           >
-            Add to cart
+            {isAdded ? "Added! ✓" : "Add to cart"}
           </button>
         ) : (
           <button

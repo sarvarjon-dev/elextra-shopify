@@ -1,4 +1,10 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Product } from "../types";
 
 export interface CartItem extends Product {
@@ -9,9 +15,9 @@ export interface CartItem extends Product {
 interface CartContextType {
   cart: CartItem[];
   isAllSelected: boolean;
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantityToAdd: number) => void;
   removeFromCart: (productId: number) => void; // agar id string bo'lsa string qilasiz
-  updateQuantity: (productId: number, quantity: number) => void;
+  updateQuantity: (productId: number, quantity?: number) => void;
   toggleSelected: (productId: number) => void;
   toggleSelectAll: () => void;
 }
@@ -33,7 +39,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const isAllSelected = cart.length > 0 && cart.every((item) => item.selected);
 
   // Mahsulot qo'shish
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantityToAdd: number = 1) => {
     setCart((prevCart) => {
       // Mahsulot oldin qo'shilganligini tekshiramiz
       const existingItem = prevCart.find((item) => item.id === product.id);
@@ -42,13 +48,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         // Agar bor bo'lsa, faqat miqdorini (quantity) bittaga oshiramiz
         return prevCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantityToAdd }
             : item,
         );
       }
 
       // Agar yo'q bo'lsa, yangi qo'shamiz (default: quantity: 1, selected: true)
-      return [...prevCart, { ...product, quantity: 1, selected: true }];
+      return [
+        ...prevCart,
+        { ...product, quantity: quantityToAdd, selected: true },
+      ];
     });
   };
 
@@ -99,4 +108,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </CartContext.Provider>
   );
+};
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error("useContext faqat AuthProvider ichida ishlatilishi kerak");
+  }
+  return context;
 };

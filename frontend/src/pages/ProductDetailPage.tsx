@@ -1,31 +1,25 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import ReviewCard from "../components/common/cards/ReviewCard";
 import { useLoaderData, useNavigate } from "react-router";
 import type { Product } from "../types";
-import { CartContext } from "../context/CartContext";
+import { useCart } from "../context/CartContext";
 
 export const ProductDetailPage = () => {
-  const cartContext = useContext(CartContext);
-
-  // Tugma bosilganini bilish uchun vaqtinchalik state
+  const { addToCart } = useCart();
   const [isAdded, setIsAdded] = useState(false);
 
-  if (!cartContext) return null;
-  const { addToCart } = cartContext;
+  const product = useLoaderData() as Product;
+  const navigate = useNavigate();
 
   // Maxsus funksiya yozamiz
   const handleAddToCart = () => {
-    addToCart(product); // Context'dagi funksiyani ishlatib xotiraga yozamiz
-    setIsAdded(true); // Tugma holatini "Qo'shildi" ga o'zgartiramiz
+    addToCart(product, quantity); // Context'dagi funksiyani ishlatib xotiraga yozamiz
 
-    // 2 soniyadan keyin tugmani yana eski holatiga qaytaramiz
+    setIsAdded(true); // Tugma holatini "Qo'shildi" ga o'zgartiramiz
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
   };
-
-  const product = useLoaderData() as Product;
-  const navigate = useNavigate();
 
   // Vaqtincha 3 ta rasm yasab olamiz (biri o'zining rasmi, ikkitasi oddiy namuna)
   const productImages = [
