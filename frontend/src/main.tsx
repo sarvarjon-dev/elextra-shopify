@@ -12,6 +12,7 @@ import { AuthProvider } from "./context/AuthContext";
 import RootLayout from "./layouts/RootLayout";
 import { getCategories } from "./loaders/categoryLoader";
 import { productDetailLoader } from "./loaders/productLoader";
+import { CartProvider } from "./context/CartContext";
 
 const router = createBrowserRouter([
   {
@@ -54,7 +55,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
     </AuthProvider>
   </StrictMode>,
 );
