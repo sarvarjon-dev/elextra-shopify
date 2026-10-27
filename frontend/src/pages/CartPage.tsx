@@ -1,67 +1,17 @@
-import { useState } from "react";
-import { Trash2, Heart, TicketPercent } from "lucide-react"; // Ikonkalar uchun
+import { Trash2, TicketPercent } from "lucide-react"; // Ikonkalar uchun
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-
-// Vaqtincha savatchadagi mahsulotlar (Keyin buni Context'dan olamiz)
-const mockCartItems = [
-  {
-    id: 1,
-    title: "LED Monitor With High Quality In The World",
-    sku: "12334124124",
-    price: 976.33,
-    quantity: 1,
-    image:
-      "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?w=200&q=80",
-    selected: false,
-    liked: false,
-  },
-  {
-    id: 2,
-    title: "Magic Pen for iPad",
-    sku: "12334124124",
-    price: 976.33,
-    quantity: 1,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80",
-    selected: true,
-    liked: false,
-  },
-  {
-    id: 3,
-    title: "HI LED Mega Screen Boost",
-    sku: "12334124124",
-    price: 976.33,
-    quantity: 1,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80",
-    selected: true,
-    liked: true,
-  },
-];
+import { useCart } from "../context/CartContext";
 
 export const CartPage = () => {
-  const [items, setItems] = useState(mockCartItems);
-
-  // 1. Hamma mahsulotlar tanlanganini tekshiramiz (agar hammasi true bo'lsa, bu ham true bo'ladi)
-  const isAllSelected =
-    items.length > 0 && items.every((item) => item.selected);
-
-  // 2. "Select All" checkbox bosilganda ishlaydigan funksiya
-  const handleSelectAll = () => {
-    const newState = !isAllSelected;
-
-    const updatedItems = items.map((item) => ({ ...item, selected: newState }));
-    setItems(updatedItems);
-  };
-
-  // 3. Alohida bitta mahsulot checkbox'i bosilganda ishlaydigan funksiya
-  const handleSelectItem = (id: number) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, selected: !item.selected } : item,
-    );
-    setItems(updatedItems);
-  };
+  const {
+    cart,
+    isAllSelected,
+    removeFromCart,
+    updateQuantity,
+    toggleSelected,
+    toggleSelectAll,
+  } = useCart();
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Navbar />
@@ -77,7 +27,7 @@ export const CartPage = () => {
                 <input
                   type="checkbox"
                   checked={isAllSelected}
-                  onChange={handleSelectAll}
+                  onChange={toggleSelectAll}
                   className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                 />
                 Select All
@@ -89,7 +39,7 @@ export const CartPage = () => {
             </div>
 
             {/* Mahsulotlar ro'yxati (Map) */}
-            {items.map((item) => (
+            {cart.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-100 bg-white p-4 shadow-sm"
@@ -99,13 +49,13 @@ export const CartPage = () => {
                   <input
                     type="checkbox"
                     checked={item.selected}
-                    onChange={() => handleSelectItem(item.id)}
+                    onChange={() => toggleSelected(item.id)}
                     className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                   />
                   <div className="h-20 w-20 overflow-hidden rounded-lg bg-gray-100">
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={item.main_image || "https://via.placeholder.com/150"}
+                      alt={item.name}
                       className="h-full w-full object-cover"
                     />
                   </div>
@@ -115,7 +65,7 @@ export const CartPage = () => {
                 <div className="flex flex-1 flex-col">
                   <div className="flex justify-between">
                     <h3 className="font-bold text-slate-900 line-clamp-1">
-                      {item.title}
+                      {item.name}
                     </h3>
                     <span className="text-xs text-slate-400">
                       SKU {item.sku}
@@ -133,26 +83,35 @@ export const CartPage = () => {
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end mt-4 sm:mt-0">
                   {/* Miqdor */}
                   <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50">
-                    <button className="px-3 py-1 font-bold text-slate-500 hover:text-orange-500">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="px-3 py-1 font-bold text-slate-500 hover:text-orange-500"
+                    >
                       -
                     </button>
                     <span className="w-8 text-center text-sm font-bold text-slate-900">
                       {item.quantity}
                     </span>
-                    <button className="px-3 py-1 font-bold text-slate-500 hover:text-orange-500">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="px-3 py-1 font-bold text-slate-500 hover:text-orange-500"
+                    >
                       +
                     </button>
                   </div>
 
                   {/* O'chirish */}
-                  <button className="rounded-lg border border-slate-200 p-2 text-slate-400 hover:bg-slate-50 hover:text-red-500">
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="rounded-lg border border-slate-200 p-2 text-slate-400 hover:bg-slate-50 hover:text-red-500"
+                  >
                     <Trash2 size={18} />
                   </button>
 
                   {/* Yoqtirish (Heart) */}
-                  <button
+                  {/* <button
                     className={`rounded-lg border p-2 transition-colors ${
-                      item.liked
+                      item.
                         ? "border-orange-500 bg-orange-500 text-white"
                         : "border-slate-200 text-slate-400 hover:bg-slate-50"
                     }`}
@@ -161,7 +120,7 @@ export const CartPage = () => {
                       size={18}
                       fill={item.liked ? "currentColor" : "none"}
                     />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}

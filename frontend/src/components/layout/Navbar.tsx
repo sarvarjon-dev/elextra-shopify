@@ -3,12 +3,15 @@ import {
   Heart,
   MapPin,
   Search,
-  ShoppingBag,
+  ShoppingCart,
   Truck,
   Zap,
 } from "lucide-react";
+import { Link } from "react-router";
+import { useCart } from "../../context/CartContext";
 
 function Navbar() {
+  const { cart } = useCart();
   return (
     <header className="w-full border-b border-slate-100 bg-white">
       <div className="hidden border-b border-slate-100 bg-slate-50/70 sm:block">
@@ -60,8 +63,8 @@ function Navbar() {
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-4 px-5 py-4 sm:px-8 lg:flex-nowrap lg:px-10 lg:py-5">
-        <a
-          href="#"
+        <Link
+          to={"/"}
           aria-label="Elextra home"
           className="inline-flex shrink-0 items-center gap-1 text-2xl font-extrabold tracking-tight text-slate-900"
         >
@@ -70,7 +73,7 @@ function Navbar() {
             className="h-6 w-6 fill-orange-500 text-orange-500"
           />
           Elextra
-        </a>
+        </Link>
 
         <form
           role="search"
@@ -113,16 +116,16 @@ function Navbar() {
               12
             </span>
           </a>
-          <a
-            href="#"
+          <Link
+            to={"/cart"}
             aria-label="Shopping bag, 4 items"
             className="relative flex h-10 w-10 items-center justify-center text-slate-700 transition hover:text-orange-500"
           >
-            <ShoppingBag aria-hidden="true" className="h-5 w-5" />
+            <ShoppingCart aria-hidden="true" className="h-5 w-5" />
             <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-bold leading-none text-white">
-              4
+              {cart.length}
             </span>
-          </a>
+          </Link>
           <a
             href="/login"
             className="hidden rounded-lg bg-slate-100 px-4 py-3 text-xs font-bold tracking-wide text-slate-700 transition hover:bg-slate-200 md:inline-flex"
