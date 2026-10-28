@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
   type ReactNode,
+  useMemo,
 } from "react";
 import type { Product } from "../types";
 
@@ -17,9 +18,10 @@ interface CartContextType {
   isAllSelected: boolean;
   addToCart: (product: Product, quantityToAdd: number) => void;
   removeFromCart: (productId: number) => void; // agar id string bo'lsa string qilasiz
-  updateQuantity: (productId: number, quantity?: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
   toggleSelected: (productId: number) => void;
   toggleSelectAll: () => void;
+  totalPrice: number;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(
@@ -93,6 +95,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const totalPrice = useMemo(() => {
+    const selectedItems = cart.filter((item) => item.selected === true);
+    const sumPrice = selectedItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+    return sumPrice;
+  }, [cart]);
+
   return (
     <CartContext.Provider
       value={{
@@ -101,6 +112,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
+        totalPrice,
         toggleSelected,
         toggleSelectAll,
       }}

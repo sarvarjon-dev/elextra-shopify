@@ -48,8 +48,8 @@ export default function LoginPage() {
       });
 
       const { access_token } = response.data;
-      const fakeUser = { id: "1", full_name: "user1", email: data.email };
-      login(fakeUser, access_token);
+
+      login(access_token);
       navigate("/");
     } catch (err: any) {
       const errMsg = err.response?.data?.detail || "Email yoki parol xato!";

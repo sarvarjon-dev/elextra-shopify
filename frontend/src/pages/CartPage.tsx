@@ -11,6 +11,7 @@ export const CartPage = () => {
     updateQuantity,
     toggleSelected,
     toggleSelectAll,
+    totalPrice,
   } = useCart();
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -107,20 +108,6 @@ export const CartPage = () => {
                   >
                     <Trash2 size={18} />
                   </button>
-
-                  {/* Yoqtirish (Heart) */}
-                  {/* <button
-                    className={`rounded-lg border p-2 transition-colors ${
-                      item.
-                        ? "border-orange-500 bg-orange-500 text-white"
-                        : "border-slate-200 text-slate-400 hover:bg-slate-50"
-                    }`}
-                  >
-                    <Heart
-                      size={18}
-                      fill={item.liked ? "currentColor" : "none"}
-                    />
-                  </button> */}
                 </div>
               </div>
             ))}
@@ -145,7 +132,7 @@ export const CartPage = () => {
               <div className="mb-6 flex items-center justify-between border-t border-slate-100 pt-6">
                 <span className="text-xl font-bold text-slate-900">Total</span>
                 <span className="text-2xl font-bold text-orange-500">
-                  $1,952.66
+                  ${totalPrice}
                 </span>
               </div>
 
