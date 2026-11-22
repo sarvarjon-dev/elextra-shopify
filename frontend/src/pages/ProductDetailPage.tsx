@@ -18,7 +18,7 @@ export const ProductDetailPage = () => {
     setIsAdded(true); // Tugma holatini "Qo'shildi" ga o'zgartiramiz
     setTimeout(() => {
       setIsAdded(false);
-    }, 2000);
+    }, 1000);
   };
 
   // Vaqtincha 3 ta rasm yasab olamiz (biri o'zining rasmi, ikkitasi oddiy namuna)
