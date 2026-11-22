@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import Home from "./pages/Home";
 import CategoryPage, { categoryLoader } from "./pages/CategoryPage";
 import LoginPage from "./pages/LoginPage";
@@ -13,6 +13,10 @@ import RootLayout from "./layouts/RootLayout";
 import { getCategories } from "./loaders/categoryLoader";
 import { productDetailLoader } from "./loaders/productLoader";
 import { CartProvider } from "./context/CartContext";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrdersPage from "./pages/OrdersPage";
+import AdminLayout from "./components/layout/AdminLayout";
+import ProductFormPage from "./pages/admin/ProductFormPage";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +39,10 @@ const router = createBrowserRouter([
         element: <ProductDetailPage />,
         loader: productDetailLoader,
       },
+      {
+        path: "orders",
+        element: <OrdersPage />,
+      },
     ],
   },
 
@@ -49,6 +57,48 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <CartPage />,
+  },
+  {
+    path: "/checkout",
+    element: <CheckoutPage />,
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout />, // Boya yaratgan Admin menyu o'ramimiz
+    children: [
+      {
+        index: true,
+        element: <Navigate to="dashboard" replace />,
+      },
+      // E'tibor bering, bu yerda "dashboard" deb yozilsa, URL "/admin/dashboard" bo'ladi
+      {
+        path: "dashboard",
+        element: (
+          <div className="text-2xl font-bold">Admin Dashboard Sahifasi</div>
+        ),
+      },
+      { path: "products/add", element: <ProductFormPage /> },
+      {
+        path: "orders",
+        element: (
+          <div className="text-2xl font-bold">Barcha Buyurtmalar Sahifasi</div>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <div className="text-2xl font-bold">Mahsulotlarni Boshqarish</div>
+        ),
+      },
+      {
+        path: "users",
+        element: <div className="text-2xl font-bold">Mijozlar Ro'yxati</div>,
+      },
+      {
+        path: "settings",
+        element: <div className="text-2xl font-bold">Sozlamalar Sahifasi</div>,
+      },
+    ],
   },
 ]);
 

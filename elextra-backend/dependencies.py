@@ -1,40 +1,32 @@
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 
 from database.connection import get_db
 from models.user import User
 from utils import jwt_key, Algorithm
 
-# Swagger'da "Authorize" tugmasi chiqishi uchun Bearer sxemasi
-security = HTTPBearer()
-
-
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+        request: Request,
     db: Session = Depends(get_db),
 ) -> User:
-    token = credentials.credentials
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Token yaroqsiz yoki muddati o'tgan",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='token not found')
 
     try:
         # Tokenni ochib ko'ramiz (decode)
         payload = jwt.decode(token, jwt_key, algorithms=[Algorithm])
         user_id: str = payload.get("sub")
         if user_id is None:
-            raise credentials_exception
+            raise HTTPException(status_code=401, detail='Token expired')
     except jwt.PyJWTError:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail='cannot verify token')
 
     # Token ichidagi ID orqali bazadan foydalanuvchini topamiz
     user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail='User not found')
 
     return user
 

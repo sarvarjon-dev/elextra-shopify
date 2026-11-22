@@ -2,8 +2,10 @@ import { Trash2, TicketPercent } from "lucide-react"; // Ikonkalar uchun
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router";
 
 export const CartPage = () => {
+  const navigate = useNavigate();
   const {
     cart,
     isAllSelected,
@@ -136,7 +138,10 @@ export const CartPage = () => {
                 </span>
               </div>
 
-              <button className="w-full rounded-lg bg-orange-500 py-4 font-bold text-white shadow-md transition hover:bg-orange-600 hover:shadow-lg">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="w-full rounded-lg bg-orange-500 py-4 font-bold text-white shadow-md transition hover:bg-orange-600 hover:shadow-lg"
+              >
                 CHECKOUT
               </button>
 

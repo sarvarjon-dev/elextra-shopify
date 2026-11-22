@@ -49,15 +49,16 @@ export default function LoginPage() {
 
       const { access_token } = response.data;
 
-      login(access_token);
+      const authenticated = await login(access_token);
+      if (!authenticated) {
+        alert("Kirish muvaffaqiyatli bo'ldi, lekin sessiyani tekshirib bo'lmadi.");
+        return;
+      }
       navigate("/");
     } catch (err: any) {
       const errMsg = err.response?.data?.detail || "Email yoki parol xato!";
       alert(errMsg);
     }
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log("Tayyor ma'lumot:", data);
   };
   return (
     <AuthLayout>

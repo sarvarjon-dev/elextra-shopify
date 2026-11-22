@@ -18,7 +18,7 @@ interface User {
 // 2. Context nimalarni o'z ichiga olishini belgilaymiz
 interface AuthContextType {
   user: User | null; // Boshida hech kim kirmagan bo'ladi (null)
-  login: (token: string) => Promise<void>;
+  login: (token: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -31,10 +31,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   // 1. Markaziy userni olish funksiyasi
-  const fetchAndSetUser = async (token: string) => {
+  const fetchAndSetUser = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/me", {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get("http://localhost:8000/auth/me", {
+        withCredentials: true,
       });
       setUser(response.data);
       return true; // Muvaqaffiyatli bo'lsa true
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = Cookies.get("access_token");
 
       if (token) {
-        await fetchAndSetUser(token);
+        await fetchAndSetUser();
       }
       setLoading(false); // Tekshiruv tugadi
     };
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (token: string) => {
     Cookies.set("access_token", token, { expires: 7 });
 
-    await fetchAndSetUser(token); // Yana o'sha tayyor funksiyani chaqiramiz
+    return fetchAndSetUser(token);
   };
 
   return (
